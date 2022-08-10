@@ -5,6 +5,7 @@ from datetime import datetime
 from turtle import Terminator
 import mysql.connector
 
+########################### CONEXAO ##################################
     
 def Conectar(host='192.168.99.254',usuario='Evaldo',senha='@meta123!',database='controle_agrs'):
     """Conectar
@@ -29,6 +30,501 @@ def Conectar(host='192.168.99.254',usuario='Evaldo',senha='@meta123!',database='
     )
     cursor = conn.cursor()
     return conn,cursor
+
+########################### SELECTS ##################################
+
+def Situacoes_ACs(id_agr):
+    """Busca a situação do AGR perante cada AC
+
+    Args:
+        id_agr (int): Id do AGR em questão
+
+    Returns:
+        (tupla): Tupla com as situações
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT ac_meta,ac_soluti,ac_digital FROM acs WHERE fk_id_agr_ac = '{}' ".format(str(id_agr))
+    cursor.execute(comando)
+    saida = cursor.fetchone()
+    conn.close()
+    
+    return saida
+
+def Maquinas_do_AGR(id_agr):
+    """Busca quais máquinas foram atribuidas a um AGR
+
+    Args:
+        id_agr (int): ID do AGR em questão
+
+    Returns:
+        (lista): Lista de tuplas com ID e nome das máquinas  respectivamente
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT fk_id_maquina,nome_maquina FROM agrs_possui_maquinas WHERE fk_id_agr = '{}' ".format(str(id_agr))
+    cursor.execute(comando)
+    saida = cursor.fetchall()
+    conn.close()
+    
+    lista = []
+    for item in saida:
+        lista.append(item)
+    
+    return lista
+
+def Maquina_Assinada_Por(id_maquina):
+    """Busca os AGRs que assinaram o termo de uma determinada Máquina
+
+    Args:
+        id_maquina (int): ID da máquina em questão;
+
+    Returns:
+        (lista): Caso exista um termo assinado para a máquina, 
+                retornará uma lista que contem uma tupla com o nome e a ID de todos os AGRs que assinaram.
+                Caso Não exista, retorna False;
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT fk_id_agr FROM agrs_assina_termos_doacao WHERE fk_id_maquina = '{}' ".format(str(id_maquina))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        lista = []
+        for item in resultado:
+            id_agr = item[0]
+            nome_agr = Selecionar_Coluna_Unica('nome_agr','agrs','id_agr',id_agr)
+            lista.append((id_agr,nome_agr))
+            
+        return lista
+    else:
+        return False
+
+def Maquina_Usada_Por(id_maquina):
+    """Busca os AGRs que usam determinada Máquina
+
+    Args:
+        id_maquina (int): ID da máquina em questão;
+
+    Returns:
+        (lista): Lista que contem uma tupla com o ID e Nome (respectivamente) de todos os AGRs que usam a máquina.
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT fk_id_agr FROM agrs_possui_maquinas WHERE fk_id_maquina = '{}' ".format(str(id_maquina))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        lista = []
+        for item in resultado:
+            id_agr = item[0]
+            nome_agr = Selecionar_Coluna_Unica('nome_agr','agrs','id_agr',id_agr)
+            lista.append((id_agr,nome_agr))
+            
+        return lista
+    else:
+        return False
+
+def AGR_Assinou(id_agr):
+    """Busca todas as Máquinas para as quais o AGR assinou o termo
+
+    Args:
+        id_agr (int): ID do AGR em questão
+
+    Returns:
+        lista: Caso ele tenha assinado algum termo, retorna uma lista com a ID e o Nome das máquinas.
+                Caso não tenha, rertorna False
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT fk_id_maquina FROM agrs_assina_termos_doacao WHERE fk_id_agr = '{}' ".format(str(id_agr))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        lista = []
+        for item in resultado:
+            
+            id_maquina = item[0]
+            nome_maquina = Selecionar_Coluna_Unica('nome_maquina','maquinas','id_maquina',id_maquina)
+            lista.append((id_maquina,nome_maquina))
+            
+        return lista
+    else:
+        return False
+
+def Selecionar_Coluna_Unica(coluna,tabela,coluna_condicao,valor_condicao):
+    """Selecionar coluna específica de uma tabela, que satsfaça uma condição
+    Exemplo:
+    SELECT coluna FROM tabela WHERE coluna_condicao = valor_condicao
+
+    Args:
+        coluna (str,int,float): Coluna que deseja selecionar
+        tabela (str,int,float): Tabela onde a Coluna está
+        coluna_condicao (str,int,float): Coluna que deseja usar como condicao
+        valor_condicao (str,int,float): valor condicao que deseja para o atributo condicao
+
+    Returns:
+        str: Resultado selecionado, caso exista. Retorna False caso não exista
+    """
+    conn,cursor = Conectar()
+    
+    comando = "SELECT {} FROM {} WHERE {} = '{}'".format(str(coluna),str(tabela),str(coluna_condicao),str(valor_condicao))
+    cursor.execute(comando)
+    saida = cursor.fetchone()
+    
+    conn.close()
+    
+    if saida:
+        if type(saida) == tuple or type(saida) == list :
+            return saida[0]
+        else:
+            return saida
+    else:
+        return False
+
+def Selecionar_Tabela_Completa(tabela):
+    """Seleciona todas as linhas de uma tabela específica
+
+    Args:
+        tabela (str): Nome da Tabela
+
+    Returns:
+        lista: Lista com todas as linhas da tabela
+    """
+    
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM {}".format(str(tabela))
+    cursor.execute(comando)
+
+    lista = []
+    for linha in cursor.fetchall():
+        lista.append(linha)
+
+    conn.close()
+    return lista
+
+def Selecionar_Filtros(tabela,colunas,filtros={}):
+    """Criar um comando Select usando filtros
+
+    Args:
+        tabela (str): Tabela a ser selecionada
+        colunas (str): Colunas a serem selecionadas
+        filtros (dict, optional): Filtros para serem usados. A chave representa a coluna e o seu valor representa o valor que procura.
+                                Defaults to {}.
+
+    Returns:
+        lista: Lista com todos os resultados encontrados
+    """
+    conn,cursor = Conectar()
+    
+    comando = "SELECT "
+    
+    for coluna in colunas:
+        comando += coluna + ","
+    comando = comando[:len(comando)-1] + " FROM " + tabela
+    
+    if filtros != {}:
+        comando += " WHERE "
+    
+        for item in filtros.items():
+            if item[0] == "NOME":
+                comando += "NOME LIKE '%{}%' AND ".format(item[1])
+            else: 
+                comando += str(item[0]) + " = '" + str(item[1]) + "' AND "
+        
+        comando = comando[:-5]
+        
+    cursor.execute(comando)
+
+    lista = []
+    for linha in cursor.fetchall():
+        lista.append(linha)
+
+    conn.close()
+    return lista
+
+def Selecionar_Diferentes(coluna,tabela):
+    """Criar um comando Select para selecionar itens distintos
+
+    Args:
+        coluna (str): Coluna para procurar itens dinstintos
+        tabela (str): Tabela seleconada
+
+    Returns:
+        lista: Lista com os resultados encontrados
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT DISTINCT " + coluna + " FROM " + tabela
+    
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+
+    lista = []
+    for linha in resultado:
+        lista.append(linha[0])
+
+    conn.close()
+    return lista
+
+def Buscar_Parametrizacoes_Recebidas(id_maquina):
+    """Buscar todas as Parametrizações feitas em uma determinada Máquina
+
+    Args:
+        id_maquina (int): ID da máquina em questão;
+
+    Returns:
+        (lista): Lista com as Linhas de registros de parametrizações
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM parametrizacoes WHERE fk_id_maquina = '{}' ".format(str(id_maquina))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        return resultado
+    else:
+        return False
+
+def Buscar_Parametrizacoes_Feitas(id_funcionario):
+    """Buscar todas as Parametrizações feitas por determinado funcionario
+
+    Args:
+        id_funcionario (int): ID da máquina em questão;
+
+    Returns:
+        (lista): Lista com as Linhas de registros de parametrizações
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM parametrizacoes WHERE fk_id_funcionario = '{}' ".format(str(id_funcionario))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        return resultado
+    else:
+        return False
+
+def Buscar_Treinamentos_Recebidos(id_agr):
+    """Buscar todas os Treinamentos recebidos pelo AGR
+
+    Args:
+        id_agr (int): ID do AGR em questão;
+
+    Returns:
+        (lista): Lista com as Linhas de registros de treinamentos
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM treinamentos WHERE fk_id_agr = '{}' ".format(str(id_agr))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        return resultado
+    else:
+        return False
+
+def Buscar_Treinamentos_Feitos(id_funcionario):
+    """Buscar todos os Treinamentos feitos por determinado Funcionario
+
+    Args:
+        id_funcionario (int): ID do Funcionario que fez o treinamento;
+
+    Returns:
+        (lista): Lista com as Linhas de registros de treinamentos
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM treinamentos WHERE fk_id_funcionario = '{}' ".format(str(id_funcionario))
+    cursor.execute(comando)
+    resultado = cursor.fetchall()
+    conn.close()
+    
+    if resultado:
+        return resultado
+    else:
+        return False
+
+############################## ALTERAR #####################################
+
+def Alterar(tabela,coluna,novo_valor,coluna_condicao,valor_condicao):
+    """Criar um comando ALTER TABLE para alterar informações de determinada tabela
+
+    Args:
+        tabela (str): Tabela onde deseja fazer alteração
+        coluna (str): Coluna que deseja fazer alteraçãp
+        novo_valor (str): Valor que deseja inserir
+        coluna_condicao (str): Coluna com condiçção para busca
+        valor_condicao (str): Valor que deseja para fazer a busca
+    """
+    conn,cursor = Conectar()
+    
+    comando = "UPDATE {} SET {} = '{}' WHERE {} = '{}'".format(str(tabela),str(coluna),str(novo_valor),str(coluna_condicao),str(valor_condicao))
+    cursor.execute(comando)
+    
+    conn.commit()
+    conn.close()
+
+############################## DELETAR #####################################
+
+def Deletar_AGR(id_agr):
+    """Deletar um AGR
+    Remove as situações de ACs, Documentação, Tabela de Preços, Termos e Máquinas e atrelados ao AGR
+    Caso o AGR em questão seja o único atrelado a uma máquina específica, todas as parametrizações dessa máquina serão excluídas também.
+
+    Args:
+        id_agr (int): ID do AGR em questão
+    """
+    maquinas = Maquinas_do_AGR(id_agr) # Pega todas as máquinas atreladas ao AGR
+    for maquina in maquinas: #Para cada máquina
+        id_maquina = maquina[0]
+        agrs = Maquina_Usada_Por(id_maquina) #Pega todos os AGRs que usam a máquina
+        if len(agrs) == 1: #Se tiver Apenas ele usando:
+            parametrizacoes = Buscar_Parametrizacoes_Recebidas(id_maquina) #Busca todas as parametrizacoes
+            for parametrizacao in parametrizacoes: #Para cada uma delas, pega o id e deleta
+                id_parametrizacao = parametrizacao[0]
+                Deletar('parametrizacoes','id_parametrizacao',id_parametrizacao)
+            
+    conn,cursor = Conectar()
+    comando = "DELETE FROM agrs WHERE id_agr = '{}'".format(str(id_agr))
+    cursor.execute(comando)
+    conn.commit()
+    conn.close()
+
+def Deletar(tabela,coluna_condicao,valor_condicao):
+    """Criar um comando DELETE para deletar uma linha de determinada tabela
+
+    Args:
+        tabela (str): Tabela que contêm a linha
+        coluna_condicao (str): Coluna para buscar a linha
+        valor_condicao (str): Valor de condição para a busca
+    """
+    conn,cursor = Conectar()
+    comando = "DELETE FROM {} WHERE {} = '{}'".format(str(tabela),str(coluna_condicao),str(valor_condicao))
+    cursor.execute(comando)
+    conn.commit()
+    conn.close()
+
+########################## AUXILIARES ######################################
+
+def Contagem(tabela, coluna_condicao='', valor_condicao=''):
+    """Contar a quantidade de itens em uma tabela dado determinada condição.
+    Caso as condições estejam vazias procura a quantidade total de itens na tabela.
+
+    Args:
+        tabela (str): Nome da tabela
+        coluna_condicao (str, optional): Coluna para usar Condição para fazer a contagem. Defaults to ''.
+        valor_condicao (str, optional): Valor de condição para buscar os itens. Defaults to ''.
+
+    Returns:
+        int: Valor com a quantidade contada
+    """
+    conn,cursor = Conectar()
+
+    if coluna_condicao == '' and valor_condicao == '':
+        comando = "SELECT COUNT(*) FROM {}".format(str(tabela))
+    else:
+        comando = "SELECT COUNT(*) FROM {} WHERE {} = '{}'".format(str(tabela),str(coluna_condicao),str(valor_condicao))
+        
+    cursor.execute(comando)
+    resultado = int(cursor.fetchall()[0][0])
+    conn.close()
+
+    return resultado
+
+def Ultima_Linha(tabela,coluna):
+    """Pega os valores da ultima linha de uma tabela
+
+    Args:
+        tabela (str): Nome da Tabela
+        coluna (str): Coluna para filtro
+
+    Returns:
+        tupla: Tupla com as informações da última linha
+    """
+    
+    conn,cursor = Conectar()
+    comando = "SELECT * FROM {} WHERE {}=(SELECT max({}) FROM {})".format(str(tabela),str(coluna),str(coluna),str(tabela))
+    cursor.execute(comando)
+    resultado = cursor.fetchone()
+    conn.close()
+
+    return resultado
+
+def Ultima_ID(tabela,coluna):
+    """Pega a última ID de determinada tabela
+
+    Args:
+        tabela (str): Nome da Tabela
+        coluna (str): Coluna para filtro
+
+    Returns:
+        int: Valor da ID da última linha
+    """
+    
+    conn,cursor = Conectar()
+    comando = "SELECT max({}) FROM {}".format(str(coluna),str(tabela))
+    cursor.execute(comando)
+    resultado = cursor.fetchone()[0]
+    conn.close()
+
+    return resultado
+
+def Autenticar_ADM(login,senha):
+    """Fazer a autenticação de usuário Administrador
+
+    Args:
+        login (str): Login do funcionario
+        senha (str): Senha do funcionario
+
+    Returns:
+        str: Retorna True, se a autenticação for completa e o usuário for Adiminstrador. 
+        Caso não encontre o usuário ou ele não seja administrador retorna mensagem informando.
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT privilegio_funcionario FROM funcionarios WHERE " 
+    comando += "login_funcionario = '{}' ".format(login)
+    comando += "AND senha_funcionario = '{}'".format(senha)
+    cursor.execute(comando)
+    
+    resultado = cursor.fetchone()
+    conn.close()
+
+    if resultado != None:
+        if resultado == 'ADMINISTRADOR':
+            return True
+        else: 
+            return "Este Usuário Não É Administrador!"
+    else: 
+        return "Login ou Senha Incorreto!"
+
+def Autenticar(login,senha):
+    """Realizar autenticação de Funcionário
+
+    Args:
+        login (str): Login do funcionario
+        senha (str): Senha do funcionario
+
+    Returns:
+        tupla: Caso a autenticação seja completa, retorna tupla com True e as informações de Nome, Cargo e Privilégio, respectivamente
+        Caso contrário retorna False.
+    """
+    conn,cursor = Conectar()
+    comando = "SELECT nome_funcionario, cargo_funcionario, privilegio_funcionario FROM FUNCIONARIOS WHERE " 
+    comando += "login_funcionario = '{}' ".format(login)
+    comando += "AND senha_funcionario = '{}' ".format(senha) 
+        
+    cursor.execute(comando)
+    
+    resultado = cursor.fetchone()
+    conn.close()
+
+    if resultado :
+        return (True,resultado)
+    else: 
+        return False
 
 ################### INSERT #########################
 def Inserir_Documentacao(id_agr):
@@ -83,15 +579,17 @@ def Inserir_ACs(id_agr):
     conn.commit()
     conn.close()
 
-def Inserir_AGR(nome,cpf,email,telefone,termo,status='PENDENTE'):
+def Inserir_AGR(nome,cpf,email,telefone,cidade,uf,termo,status='PENDENTE'):
     """Inserir novo AGR no Banco de Dados
 
     Args:
-        nome (String): Nome completo do AGR;
-        cpf (String): Número de CPF do AGR, com formatação;
-        email (String): E-mail do AGR;
-        telefone (String): Telefone do AGR, com formatação;
-        termo (String): Confimação ou Negação sobre o AGR possuir termo de responsabilidade;
+        nome (str): Nome completo do AGR;
+        cpf (str): Número de CPF do AGR, com formatação;
+        email (str): E-mail do AGR;
+        telefone (str): Telefone do AGR, com formatação;
+        cidade(str): Cidade de atuação AGR;
+        uf(str): União Federal de atuação do AGR;
+        termo (str): Confimação ou Negação sobre o AGR possuir termo de responsabilidade;
         status (str, optional): Status do AGR, inicialmente marcado como "PENDENTE";
 
     Returns:
@@ -99,22 +597,29 @@ def Inserir_AGR(nome,cpf,email,telefone,termo,status='PENDENTE'):
     """
     conn,cursor = Conectar()
     
-    comando = "INSERT INTO agrs ( nome_agr, cpf_agr, e_mail_agr, telefone_agr, termo_responsabilidade_agr, status_agr ) \
-    VALUES ('{}','{}','{}','{}','{}','{}')".format(nome,cpf,email,telefone,termo,status)
+    comando = "INSERT INTO agrs ( nome_agr, cpf_agr, e_mail_agr, telefone_agr, cidade_agr, uf_agr, termo_responsabilidade_agr, status_agr ) \
+    VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')".format(nome,cpf,email,telefone,cidade,uf,termo,status)
     
-    cursor.execute(comando)
-    id_agr = cursor.lastrowid
+    try:
+        cursor.execute(comando)
+        id_agr = cursor.lastrowid
+        
+        conn.commit()
+        conn.close()
+        
+        Inserir_Documentacao(id_agr)
+        Inserir_Tabela_Precos(id_agr)
+        Inserir_ACs(id_agr)
     
-    conn.commit()
-    conn.close()
-    
-    Inserir_Documentacao(id_agr)
-    Inserir_Tabela_Precos(id_agr)
-    Inserir_ACs(id_agr)
+    except mysql.connector.errors.IntegrityError as err:
+        if err.errno == 1062:
+            print("!ERRO!\nEste número de CPF já foi inserido!")
+        else:
+            print("!ERRO!\nDesconhecido!")
     
     return id_agr
 
-def Nova_Maquina(nome_maquina,termo_doacao='',bitlocker=''):
+def Inserir_Maquina(nome_maquina,mac,marca,modelo,termo_doacao='',bitlocker=''):
     """Adiciona uma Nova máquina no Banco de Dados
 
     Args:
@@ -123,12 +628,15 @@ def Nova_Maquina(nome_maquina,termo_doacao='',bitlocker=''):
         bitlocker (str, optional): Arquivo de Bitlocker. Defaults to '';
     """
     conn,cursor = Conectar()
-    comando = "INSERT INTO maquinas (nome_maquina, termo_doacao_maquina, bitlocker_maquina)\
-        VALUES ('{}','{}','{}')".format(nome_maquina,termo_doacao,bitlocker)
+    comando = "INSERT INTO maquinas (nome_maquina,mac_maquina,marca_maquina,modelo_maquina,termo_doacao_maquina, bitlocker_maquina)\
+        VALUES ('{}','{}','{}','{}','{}','{}')".format(nome_maquina,mac,marca,modelo,termo_doacao,bitlocker)
     cursor.execute(comando)
+    id_maquina = cursor.lastrowid
     conn.commit()
     conn.close()
-
+    
+    return id_maquina
+    
 def Atribuir_Maquina_AGR(id_agr,id_maquina):
     """Atribui Determinada Máquina a um AGR
 
@@ -137,12 +645,24 @@ def Atribuir_Maquina_AGR(id_agr,id_maquina):
         id_maquina (int): ID da Máquina em questão;
     """
     conn,cursor = Conectar()
-    comando = "INSERT INTO agrs_possui_maquinas (fk_id_agr,fk_id_maquina)\
-        VALUES ('{}','{}')".format(id_agr,id_maquina)
-    cursor.execute(comando)
-    conn.commit()
-    conn.close()
-
+    
+    nome_agr = Selecionar_Coluna_Unica('nome_agr','agrs','id_agr',id_agr)
+    nome_maquina = Selecionar_Coluna_Unica('nome_maquina','maquinas','id_maquina',id_maquina)
+    
+    comando = "INSERT INTO agrs_possui_maquinas (fk_id_agr,nome_agr,fk_id_maquina,nome_maquina)\
+        VALUES ('{}','{}','{}','{}')".format(id_agr,nome_agr,id_maquina,nome_maquina)
+    
+    try:
+        cursor.execute(comando)
+        conn.commit()
+        conn.close()
+    
+    except mysql.connector.errors.IntegrityError as err:
+        if err.errno == 1062:
+            print("!ERRO!\nCombinação AGR-Máquina já inserida!")
+        elif err.errno == 1452:
+            print("!ERRO!\nAGR e/ou Máquina não existe(m)!")
+        
 def Assinar_Termo_Doacao(id_agr,id_maquina,termo_doacao=''):
     """Vincular um termo de doação assinado por um AGR à uma máquina
 
@@ -152,14 +672,21 @@ def Assinar_Termo_Doacao(id_agr,id_maquina,termo_doacao=''):
         termo_doacao (str, optional): Arquivo do termo de doação. Defaults to '';
     """
     conn,cursor = Conectar()
+    
     comando = "INSERT INTO agrs_assina_termos_doacao (fk_id_agr,fk_id_maquina,documento_termo_doacao)\
         VALUES ('{}','{}','{}')".format(id_agr,id_maquina,termo_doacao)
-    cursor.execute(comando)
-    conn.commit()
-    conn.close()
-
-#REVISAR
-def Parametrizacao(id_agr,id_maquina,id_funcionario,data,situacao,observacao=''):
+    
+    try:
+        cursor.execute(comando)
+        conn.commit()
+        conn.close()
+    except mysql.connector.errors.IntegrityError as err:
+        if err.errno == 1062:
+            print("!ERRO!\nMáquina com Termo Já assinado Por Este AGR!")
+        elif err.errno == 1452:
+            print("!ERRO!\nAGR e/ou Máquina não existe(m)!")
+            
+def Parametrizacao(id_maquina,id_funcionario,situacao,data='',observacao=''):
     """Adiciona nova Parametrização ao Banco de Dados
     A parametrização é feita em determinado dia, por determinado funcionario para uma máquina vinculada à um AGR
     Args:
@@ -170,9 +697,12 @@ def Parametrizacao(id_agr,id_maquina,id_funcionario,data,situacao,observacao='')
         situacao (str): Situação em que se encontra a Parametrização (Realizada,Desfeita);
         observacao (str,opicional): Qualquer observação feita pelo funcionario ao realizar a Parametrização. Padrão definid como vazio;
     """
+    if data == '':
+        data = datetime.now().strftime("%d/%m/%Y")
+        
     conn,cursor = Conectar()
-    comando = "INSERT INTO parametrizacoes (fk_id_agr,fk_id_maquina,fk_id_funcionario,data_parametrizacao,status_parametrizacao,_observacoes_parametrizacao)\
-        VALUES ('{}','{}','{}','{}','{}','{}')".format(id_agr,id_maquina,id_funcionario,data,situacao,observacao)
+    comando = "INSERT INTO parametrizacoes (fk_id_maquina,fk_id_funcionario,status_parametrizacao,data_parametrizacao,observacoes_parametrizacao)\
+        VALUES ('{}','{}','{}','{}','{}')".format(id_maquina,id_funcionario,situacao,data,observacao)
     cursor.execute(comando)
     conn.commit()
     conn.close()
@@ -207,216 +737,39 @@ def Inserir_Funcionario(nome,login,senha,email,cargo,privilegio):
         privilegio (str): Privilegio Administrador ou Funcionario, o que possibilitará determinado tipo de ações dentro do sistema;
     """
     conn,cursor = Conectar()
-    comando = "INSERT INTO funcionarios (nome_funcionario,login_funcionario,senha_funcionario,email_funcionario,cargo_funcionario,privilegio_funcionario)\
+    comando = "INSERT INTO funcionarios (nome_funcionario,login_funcionario,senha_funcionario,e_mail_funcionario,cargo_funcionario,privilegio_funcionario)\
         VALUES ('{}','{}','{}','{}','{}','{}')".format(nome,login,senha,email,cargo,privilegio)
     cursor.execute(comando)
-    
+    id_funcionario = cursor.lastrowid
     conn.commit()
     conn.close()
+    return id_funcionario
 
-def Inserir_Acoes(id_funcionario,data_acao,acao):
+def Inserir_Acoes(id_funcionario,acao,data_acao=''):
     """Inserir nova ação realizada por algum funcionário
 
     Args:
         id_funcionario (int): ID do funcionário que realizou a ação;
-        data_acao (str): Data em que a ação foi realizada;
         acao (str): Descrição da ação realizada;
+        data_acao (str): Data em que a ação foi realizada. Defaults '';
     """
+    if data_acao == '':
+        data_acao = datetime.now().strftime("%d/%m/%y às %H:%M")
+    
     conn,cursor = Conectar()
     comando = "INSERT INTO acoes (fk_id_funcionario,data_acao,acao)\
         VALUES ('{}','{}','{}')".format(id_funcionario,data_acao,acao)
     cursor.execute(comando)
     
     conn.commit()
-    conn.close()
-    
-    
-    
-#DELETE FROM `controle_agrs`.`agrs` WHERE (`id_agr` = '3');
-#######################################################################
-
-def Situacoes_ACs(id):
-    conn,cursor = Conectar()
-    comando = "SELECT ACMETA,SOLUTI FROM AGR WHERE ID_AGR = {}".format(id)
-    cursor.execute(comando)
-    result = cursor.fetchall()
-    conn.close()
-    
-    return result
-
-# lendo os dados
-def Select_Where(item = '*',coluna = '',result = '',tabela='AGR'):
-    conn,cursor = Conectar()
-
-    #cursor.execute(""" 
-    #SELECT '%s' FROM AGR;
-    #""" % coluna)
-    if str(result) != '':
-        comando = "SELECT " + item + " FROM " + tabela + " WHERE " + coluna + "='" + str(result) + "'"
-    else: 
-        #cursor.execute("SELECT * FROM AGR ")
-        comando = "SELECT * FROM " + tabela
-        
-    cursor.execute(comando)
-
-    lista = []
-    for linha in cursor.fetchall():
-        lista.append(linha)
-
-    conn.close()
-    return lista
-
-def Select_Columns(colunas,tabela='AGR',filtros={}):
-    conn,cursor = Conectar()
-    comando = "SELECT "
-    for coluna in colunas:
-        comando += coluna + ","
-    
-    comando = comando[:len(comando)-1] + " FROM " + tabela
-    #print(comando)
-    if filtros != {}:
-        comando += " WHERE "
-    
-        for f in filtros.items():
-            if f[0] == "NOME":
-                comando += "NOME LIKE '%{}%' AND ".format(f[1])
-            else: 
-                comando += str(f[0]) + " = '" + str(f[1]) + "' AND "
-        
-        comando = comando[:-5]
-        
-    cursor.execute(comando)
-
-    lista = []
-    for linha in cursor.fetchall():
-        lista.append(linha)
-
-    conn.close()
-    return lista
-    
-###################################################################
-def Select_Distinct(item,tabela='AGR'):
-    conn,cursor = Conectar()
-    comando = "SELECT DISTINCT " + item + " FROM " + tabela
-    
-    cursor.execute(comando)
-
-    lista = []
-    for linha in cursor.fetchall():
-        lista.append(linha[0])
-
-    conn.close()
-    return lista
-
-# alterando os dados da tabela
-def Alterar(tabela,coluna,novo, id):
-    conn,cursor = Conectar()
-
-    comando = "UPDATE " + tabela + " SET " + coluna + "='" + novo + "' WHERE ID_AGR=" + str(id)
-    #print(comando)
-    cursor.execute(comando)
-    
-    conn.commit()
-    conn.close()
-
-###################################################################
-
-def Deletar_AGR(id):
-    conn,cursor = Conectar()
-    comando = "DELETE FROM AGR WHERE ID=" + str(id)
-    cursor.execute(comando)
-    comando = "DELETE FROM DOCUMENTOS WHERE ID_AGR=" + str(id)
-    cursor.execute(comando)
-    comando = "DELETE FROM PARAMETRIZACAO WHERE ID_AGR=" + str(id)
-    cursor.execute(comando)
-    comando = "DELETE FROM TREINAMENTOS WHERE ID_AGR=" + str(id)
-    cursor.execute(comando)
-    conn.commit()
-    conn.close()
-
-def Deletar(tabela,coluna,item):
-    conn,cursor = Conectar()
-    comando = "DELETE FROM" + str(tabela) + "WHERE" + coluna + "=" + str(item)
-    conn.commit()
-    conn.close()
-
-################################################################
-
-def Contagem(Cnt='',Whr='',tabela='AGR'):
-    conn,cursor = Conectar()
-
-    if Cnt == '' and Whr == '':
-        comando = "SELECT COUNT(*) FROM " + tabela
-    else:
-        comando = "SELECT COUNT(*) FROM " + tabela + " WHERE " + Cnt + "='" + Whr + "'"
-
-    cursor.execute(comando)
-
-    x = int(cursor.fetchall()[0][0])
-
-    conn.close()
-
-    return x
-
-def Ultima_ID():
-    conn,cursor = Conectar()
-    comando = "SELECT * FROM AGR WHERE ID=(SELECT max(ID) FROM AGR)"
-    cursor.execute(comando)
-    x = str(cursor.fetchall()[0][0])
-    conn.close()
-
-    return x
-
-def Autenticacao_ADMIN(login,senha):
-    conn,cursor = Conectar()
-    comando = "SELECT * FROM FUNCIONARIOS WHERE " 
-    comando += "LOGIN_funcionario = '" + login + "' "
-    
-        
-    cursor.execute(comando)
-    
-    x = cursor.fetchone()
-    conn.close()
-
-    
-    if x != None:
-        if x[4] == 'ADMIN':
-            return True
-        else: 
-            return "Este Usuário Não É Administrador!\n"
-    else: 
-        return "Login ou Senha Incorreto!\n"
-    
-def Autenticacao(login,senha,privilegio=''):
-    conn,cursor = Conectar()
-    comando = "SELECT * FROM FUNCIONARIOS WHERE " 
-    comando += "LOGIN_funcionario = '" + login + "' "
-    comando += "AND SENHA_funcionario = '" + senha + "' " 
-    if privilegio != '':
-        comando += "AND PRIVILEGIO_funcionario = '" + privilegio + "'"
-        
-    cursor.execute(comando)
-    
-    x = cursor.fetchone()
-    conn.close()
-
-    if x != None:
-        return (True,x[1],x[4])
-    else: 
-        return False
-    
-def Registrar_Acao(acao,usuario):
-    """
-    FEITO_acao,USUARIO_acao,DATA_acao
-    """
-    data = datetime.now().strftime("[Realizado Dia %d/%m/%y às %H:%M]")
-    conn,cursor = Conectar()
-    comando = "INSERT INTO ACOES (FEITO_acao,USUARIO_acao,DATA_acao)\
-        VALUES ('{}','{}','{}')".format(acao,usuario,data)
-    cursor.execute(comando)
-    
-    conn.commit()
-    conn.close()
+    conn.close()  
 
 
+################################ TESTES ##########################################
 
+#Assinar_Termo_Doacao(15,8)
+#Assinar_Termo_Doacao(16,8)
+#print(Maquina_Assinada_Por(8))
+#Parametrizacao(8,7,'Concluida')
+#Parametrizacao(8,7,'Desfeita')
+#Deletar_AGR(15)
