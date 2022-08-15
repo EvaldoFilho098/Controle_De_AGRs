@@ -3,6 +3,7 @@ BANCO DE DADOS DO PROGRAMA
 """
 from datetime import datetime
 from turtle import Terminator
+from unittest import result
 import mysql.connector
 
 ########################### CONEXAO ##################################
@@ -204,7 +205,7 @@ def Selecionar_Tabela_Completa(tabela):
     conn.close()
     return lista
 
-def Selecionar_Filtros(tabela,colunas,filtros={}):
+def Selecionar_Filtros(tabela,colunas,filtros={},qtd='todos'):
     """Criar um comando Select usando filtros
 
     Args:
@@ -237,13 +238,22 @@ def Selecionar_Filtros(tabela,colunas,filtros={}):
         
     cursor.execute(comando)
 
-    lista = []
-    for linha in cursor.fetchall():
-        lista.append(linha)
+    if qtd == 'todos':
+        lista = []
+        for linha in cursor.fetchall():
+            lista.append(linha)
 
-    conn.close()
-    return lista
-
+        conn.close()
+        
+        return lista
+    
+    elif qtd == 'um':
+        
+        result = cursor.fetchone()
+        conn.close()
+        
+        return result
+        
 def Selecionar_Diferentes(coluna,tabela):
     """Criar um comando Select para selecionar itens distintos
 
@@ -346,6 +356,69 @@ def Buscar_Treinamentos_Feitos(id_funcionario):
         return resultado
     else:
         return False
+
+def Mostrar_Pendentes_Treinamento():
+    """Mostrar os AGRs que estão pendentes de Treinamento
+
+    Returns:
+        list: Retorna uma lista de tuplas com os agrs que estão pendentes de treinamento.
+             ('id_Requisicao','id_agr','Nome_agr','Local_agr','Telefone_agr','AC','Sistema')
+    """
+
+    lista_ids = Selecionar_Tabela_Completa('requisicoes_treinamentos')
+    
+    lista_agrs = []
+    for item in lista_ids:
+        
+        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1], 'status_req_trein':'PENDENTE'},'um')
+        
+        lista_agrs.append((item[0],item[1],agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3],item[2],item[3]))
+        
+    #colunas = ['ID Requisicao','id_agr','Nome','Local','Telefone','AC','Sistema']
+    
+    return lista_agrs
+
+def Mostrar_Pendentes_Parametrizacao():
+    """Mostrar os AGRs que estão pendentes de parametrização
+        
+    Returns:
+        list: Retorna uma lista de tuplas com os agrs que estão pendentes de parametrização.
+             ('id_Requisicao','id_agr','Nome_agr','Local_agr','Telefone_agr')
+
+    """
+    lista_ids = Selecionar_Tabela_Completa('requisicoes_parametrizacoes') 
+    
+    lista_agrs = []
+    for item in lista_ids:
+        
+        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1], 'status_req_par':'PENDENTE'},'um')
+        
+        lista_agrs.append((item[0],item[1], agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3],item[2],item[3]))
+        
+    #colunas = ['ID Requisicao', 'id_agr','Nome','Local','Telefone','AC','Sistema']
+    
+    return lista_agrs
+
+def Mostrar_Pendentes_Documentacao():
+    """Mostrar os AGRs que estão pendentes de documentação
+        
+    Returns:
+        list: Retorna uma lista de tuplas com os agrs que estão pendentes de documentação.
+             ('id_agr','Nome_agr','Local_agr','Telefone_agr')
+    """
+    lista_ids = Selecionar_Tabela_Completa('documentacao')
+    
+    lista_agrs = []
+    for item in lista_ids:
+        
+        if 'PENDENTE' in item:
+            agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[0]},'um')
+    
+            lista_agrs.append((item[0],agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3]))
+        
+    #colunas = ['ID AGR','Nome','Local','Telefone']
+    
+    return lista_agrs
 
 ############################## ALTERAR #####################################
 
@@ -555,7 +628,7 @@ def Inserir_Tabela_Precos(id_agr):
     conn,cursor = Conectar()
     
     comando = "INSERT INTO tabela_precos (fk_id_agr_tp)\
-        VALUES ({})".format(id_agr)
+        VALUES ('{}')".format(id_agr)
     
     cursor.execute(comando)
     
@@ -572,7 +645,7 @@ def Inserir_ACs(id_agr):
     conn,cursor = Conectar()
     
     comando = "INSERT INTO acs (fk_id_agr_ac)\
-        VALUES ({})".format(id_agr)
+        VALUES ('{}')".format(id_agr)
     
     cursor.execute(comando)
     
@@ -701,7 +774,7 @@ def Parametrizacao(id_maquina,id_funcionario,situacao,data='',observacao=''):
         data = datetime.now().strftime("%d/%m/%Y")
         
     conn,cursor = Conectar()
-    comando = "INSERT INTO parametrizacoes (fk_id_maquina,fk_id_funcionario,status_parametrizacao,data_parametrizacao,observacoes_parametrizacao)\
+    comando = "INSERT INTO parametrizacoes (fk_id_maquina,fk_id_funcionario,status_req_parametrizacao,data_parametrizacao,observacoes_parametrizacao)\
         VALUES ('{}','{}','{}','{}','{}')".format(id_maquina,id_funcionario,situacao,data,observacao)
     cursor.execute(comando)
     conn.commit()
@@ -764,7 +837,40 @@ def Inserir_Acoes(id_funcionario,acao,data_acao=''):
     conn.commit()
     conn.close()  
 
+def Requisicao_Treinamento(id_agr,ac_req,sistema):
+    """Solicitar Requisição de Treinamento para determinado AGR
 
+    Args:
+        id_agr (int): ID do AGR para o qual será solicitado treinamento
+        ac_req (str): AC para qual o treinamento será feito
+        sistema (str): Sistema que será treinad
+    """
+    conn,cursor = Conectar()
+    
+    comando = "INSERT INTO requisicoes_treinamentos (fk_id_agr_req_trein, ac_req_trein, sistema_req_trein) \
+        VALUES ('{}','{}','{}')".format(str(id_agr),str(ac_req),str(sistema))
+    
+    cursor.execute(comando)
+    
+    conn.commit()
+    conn.close()
+
+def Requisicao_Parametrizacao(id_agr):
+    """Solicitar Requisição de Treinamento para determinado AGR
+
+    Args:
+        id_agr (int): ID do AGR para o qual será solicitado treinamento
+    """
+    conn,cursor = Conectar()
+    
+    comando = "INSERT INTO requisicoes_parametrizacoes (fk_id_agr_req_par)\
+        VALUES ({})".format(id_agr)
+    
+    cursor.execute(comando)
+    
+    conn.commit()
+    conn.close()
+    
 ################################ TESTES ##########################################
 
 #Assinar_Termo_Doacao(15,8)
@@ -773,3 +879,16 @@ def Inserir_Acoes(id_funcionario,acao,data_acao=''):
 #Parametrizacao(8,7,'Concluida')
 #Parametrizacao(8,7,'Desfeita')
 #Deletar_AGR(15)
+#Inserir_AGR('Evaldo','12345','evaldo@meta','2222432','Ponta Pora','MS','Nao')
+#Inserir_AGR('Kevin','12345123','kevin@meta','2222245522','Rio de Janeiro','RJ','Sim')
+#Inserir_AGR('Gabriel','11232345','gabriel@meta','53455222','Pimenta Bueno','RO','Nao')
+#Inserir_AGR('Luis','126689345','luis@meta','22266862','Ponta Pora','MS','Nao')
+
+#Requisicao_Parametrizacao(18)
+#Requisicao_Treinamento(19,'AC META','HOPE')
+#Requisicao_Treinamento(20,'AC DIGITAL','Todos')
+#Requisicao_Treinamento(21,'SOLUTI','Videoconferencia')
+
+#print(Mostrar_Pendentes_Treinamento())
+#print(Mostrar_Pendentes_Parametrizacao())
+print(Mostrar_Pendentes_Documentacao())
