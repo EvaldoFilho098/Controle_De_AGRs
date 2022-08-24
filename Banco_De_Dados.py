@@ -891,4 +891,4 @@ def Requisicao_Parametrizacao(id_agr):
 
 #print(Mostrar_Pendentes_Treinamento())
 #print(Mostrar_Pendentes_Parametrizacao())
-print(Mostrar_Pendentes_Documentacao())
+#print(Mostrar_Pendentes_Documentacao())

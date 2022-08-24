@@ -23,8 +23,8 @@ class Tela():
             
         #### Tamanho da Pagina
         if tipo == "comum":
-            self.width = "1024"
-            self.height = "600"
+            self.width = "1224"
+            self.height = "700"
             
             self.root.minsize(width = int(self.width), height= int(self.height))
             
@@ -95,14 +95,14 @@ class Tela():
         self.Logo = Label(self.frame_cabecalho,image=self.Logo_Meta,bg=cor_fundo)
         self.Logo.place(relx=0.0,rely=0.0)
         
-        self.titulo_cabecalho = Texto(self.frame_cabecalho,titulo,fonte_Titulos_32)
-        self.titulo_cabecalho.Texto.pack(side=TOP,padx=25,pady=20,anchor="center")
+        self.titulo_cabecalho = Texto(self.frame_cabecalho,titulo,font=fonte_Titulos_30)
+        self.titulo_cabecalho.pack(side=TOP,padx=25,pady=20,anchor="center")
         
-        self.lbl_bem_vindo = Texto(self.frame_cabecalho,"Bem Vindo,",fonte_Textos_12)
-        self.lbl_bem_vindo.Texto.place(relx=0.85,rely=0.2)
+        self.lbl_bem_vindo = Texto(self.frame_cabecalho,"Bem Vindo,")
+        self.lbl_bem_vindo.place(relx=0.85,rely=0.2)
         
-        self.lbl_funcionario = Texto(self.frame_cabecalho,funcionario,fonte_Textos_12)
-        self.lbl_funcionario.Texto.place(relx=0.85,rely=0.4)
+        self.lbl_funcionario = Texto(self.frame_cabecalho,funcionario)
+        self.lbl_funcionario.place(relx=0.85,rely=0.5)
     
                 
     

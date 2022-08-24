@@ -124,13 +124,14 @@ class Entrada(Entry):
         self.delete(0, "end")
         self.insert(0, novo_texto)
 
-class Entrada_Texto:
+class Texto_Entrada:
     def __init__(self,master,texto,**args):
         
         bg = args.get('bg')
         fg = args.get('fg')
         font = args.get('font')
         width = args.get('width')
+        width_entr = args.get('width_entr')
         
         if not bg:
             bg = cor_fundo
@@ -141,19 +142,39 @@ class Entrada_Texto:
         if not font:
             font = fonte_Mediana_14
             
-        if not width:
-            width = 15
+        if not width_entr:
+            width_entr = 20
         
+        if not width:
+            width = 300 
+        
+            
         self.Frame = Frame(master)
         self.Frame.configure(
+            width=width,
+            height=25,
             bg=bg
         )
         
-        self.texto = Texto(self.Frame,texto,bg=bg,fg=fg,font=font)
-        self.entrada = Entrada(self.Frame,width=width)
+        self.Frame_texto = Frame(self.Frame)
+        self.Frame_texto.configure(
+            bg=bg
+        )
+        self.Frame_texto.place(relx=0,rely=0,relwidth=0.4,relheight=1)
         
-        self.texto.pack(side=LEFT,padx=5,anchor='e')
-        self.entrada.pack(side=RIGHT,anchor='w')
+        self.Frame_entrada = Frame(self.Frame)
+        self.Frame_entrada.configure(
+            bg=bg
+        )
+        self.Frame_entrada.place(relx=0.4,rely=0,relwidth=0.6,relheight=1)
+        
+        
+        self.texto = Texto(self.Frame_texto,texto,bg=bg,fg=fg,font=font)
+        self.entrada = Entrada(self.Frame_entrada,width=width_entr)
+        
+        
+        self.texto.pack(side=LEFT)
+        self.entrada.pack(side=RIGHT)
 
 class Botao_Check(Checkbutton):
     def __init__(self,master,texto,variavel,**args):
@@ -171,7 +192,7 @@ class Botao_Check(Checkbutton):
             fg = cor_fontes_claras
             
         if not font:
-            font = fonte_Textos_12 
+            font = fonte_Mediana_14 
         
         if not selectcolor:
             selectcolor = cor_fundo
@@ -190,7 +211,7 @@ class Botao_Imagem(Button):
         super().__init__(master=master)
         
         dir_img = 'Icones\\' + dir_img
-        self.img = redimensionar(dir_img,20,20)
+        self.img = redimensionar(dir_img,25,25)
         
         bg = args.get('bg')
         fg = args.get('fg')
@@ -208,10 +229,10 @@ class Botao_Imagem(Button):
             font = fonte_Mediana_14 
         
         if not width:
-            width = 150
+            width = 240
         
         if not height:
-            height = 25
+            height = 30
 
         
         self.configure(
@@ -223,7 +244,7 @@ class Botao_Imagem(Button):
             fg=fg,
             font=font,
             compound=LEFT,
-            padx=30,            
+            padx=10,            
         )
         
 class Botao_Radio(Radiobutton):
@@ -242,7 +263,7 @@ class Botao_Radio(Radiobutton):
             fg = cor_fontes_claras
             
         if not font:
-            font = fonte_Textos_12 
+            font = fonte_Mediana_14 
         
         if not selectcolor:
             selectcolor = cor_fundo
@@ -475,6 +496,7 @@ class Texto_Seleciona:
         font = args.get('font')
         font_lista = args.get('font_lista')
         width = args.get('width')
+        width_lista = args.get('width_lista')
         
         if not bg:
             bg = cor_fundo
@@ -492,22 +514,40 @@ class Texto_Seleciona:
             font = fonte_Mediana_14 
         
         if not font_lista:
-            font_lista = fonte_Textos_12 
+            font_lista = fonte_Mediana_14
         
         if not width:
-            width = 15
+            width = 300
+        
+        if not width_lista:
+            width_lista = 15
+            
             
         self.Frame = Frame(master)
         self.Frame.configure(
-            bg=cor_fundo
+            width=width,
+            height=25,
+            bg=bg
         )
         
-        self.txt = Texto(self.Frame,texto,bg=bg,fg=fg,font=font)
+        self.Frame_texto = Frame(self.Frame)
+        self.Frame_texto.configure(
+            bg=bg
+        )
+        self.Frame_texto.place(relx=0,rely=0,relwidth=0.4,relheight=1)
         
-        self.Lista = Lista_Selecao(self.Frame,bg=bg_lista,fg=fg_lista,font=font_lista,width=width)
+        self.Frame_lista = Frame(self.Frame)
+        self.Frame_lista.configure(
+            bg=bg
+        )
+        self.Frame_lista.place(relx=0.4,rely=0,relwidth=0.6,relheight=1)
+        
+        self.txt = Texto(self.Frame_texto,texto,bg=bg,fg=fg,font=font)
+        
+        self.Lista = Lista_Selecao(self.Frame_lista,bg=bg_lista,fg=fg_lista,font=font_lista,width=width_lista)
         self.Lista.set_completion_list(lista)
         
-        self.txt.pack(side=LEFT,padx=5)
+        self.txt.pack(side=LEFT)
         self.Lista.pack(side=RIGHT)
 
 class Abas(ttk.Notebook):
