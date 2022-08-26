@@ -6,6 +6,8 @@ from turtle import Terminator
 from unittest import result
 import mysql.connector
 
+from Mensagens import Mensagem_Concluida, Mensagem_Erro
+
 ########################### CONEXAO ##################################
     
 def Conectar(host='192.168.99.254',usuario='Evaldo',senha='@meta123!',database='controle_agrs'):
@@ -23,14 +25,45 @@ def Conectar(host='192.168.99.254',usuario='Evaldo',senha='@meta123!',database='
                 | conn -> Conexão estabelecida;
                 | cursor -> cursor para executar comandos SQL;
     """
-    conn = mysql.connector.connect(
-        host=host,
-        user=usuario,
-        password=senha,
-        database=database
-    )
-    cursor = conn.cursor()
-    return conn,cursor
+    try:
+        conn = mysql.connector.connect(
+            host=host,
+            user=usuario,
+            password=senha,
+            database=database
+        )
+        cursor = conn.cursor()
+        return conn,cursor
+    except:
+        Mensagem_Erro("Não Foi Possivel Estabelecer Conexão com o Banco de Dados!!")
+        return False,False
+
+def Testar_Conexao(host='192.168.99.254',usuario='Evaldo',senha='@meta123!',database='controle_agrs'):
+    """Testar
+    Testar conexão com o Banco de Dados instanciado
+
+    Args:
+        host (str, optional): IP onde estará hospedado o Banco de Dados. Defaults to '192.168.99.254';
+        usuario (str, optional): Usuário para uso do Banco de Dados. Defaults to 'Evaldo';
+        senha (str, optional): Senha para autenticação do Usuário. Defaults to '@meta123!';
+        bd (str, optional): Nome do Banco de Dados hospedado. Defaults to 'BD';
+    """
+    try:
+        conn = mysql.connector.connect(
+            host=host,
+            user=usuario,
+            password=senha,
+            database=database
+        )
+        
+        if conn: 
+            Mensagem_Concluida("Banco De Dados Conectado Corretamente!!")
+        else:
+            Mensagem_Erro("Não Foi Possivel Estabelecer Conexão com o Banco de Dados!!")
+    
+    except:
+        Mensagem_Erro("Não Foi Possivel Estabelecer Conexão com o Banco de Dados!!")
+    
 
 ########################### SELECTS ##################################
 
@@ -370,7 +403,7 @@ def Mostrar_Pendentes_Treinamento():
     lista_agrs = []
     for item in lista_ids:
         
-        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1], 'status_req_trein':'PENDENTE'},'um')
+        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1]},'um')
         
         lista_agrs.append((item[0],item[1],agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3],item[2],item[3]))
         
@@ -391,11 +424,11 @@ def Mostrar_Pendentes_Parametrizacao():
     lista_agrs = []
     for item in lista_ids:
         
-        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1], 'status_req_par':'PENDENTE'},'um')
+        agr_infos =  Selecionar_Filtros('agrs',['nome_agr','cidade_agr','uf_agr','telefone_agr'],{'id_agr':item[1]},'um')
         
-        lista_agrs.append((item[0],item[1], agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3],item[2],item[3]))
+        lista_agrs.append((item[0],item[1], agr_infos[0],agr_infos[1]+' - '+agr_infos[2],agr_infos[3]))
         
-    #colunas = ['ID Requisicao', 'id_agr','Nome','Local','Telefone','AC','Sistema']
+    #colunas = ['ID Requisicao', 'id_agr','Nome','Local','Telefone']
     
     return lista_agrs
 

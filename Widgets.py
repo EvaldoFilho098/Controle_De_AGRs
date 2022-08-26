@@ -1,6 +1,8 @@
 """
 ESTILO DOS WIDGETS
 """
+from select import select
+from tkinter import font
 from Cores import *
 from Fontes import *
 from tkinter import *
@@ -19,10 +21,10 @@ class Botao(Button):
         font = args.get('font')
         
         if not bg:
-            bg = cor_fundo
+            bg = cor_botoes
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fontes_botoes
             
         if not font:
             font = fonte_Mediana_14
@@ -47,7 +49,7 @@ class Texto(Label):
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
             
         if not font:
             font = fonte_Mediana_14    
@@ -72,7 +74,7 @@ class Entrada(Entry):
             bg = cor_entradas
         
         if not fg:
-            fg = cor_fontes_escuras
+            fg = cor_fontes_entradas
             
         if not font:
             font = fonte_Textos_12 
@@ -84,7 +86,7 @@ class Entrada(Entry):
             font = font,
             bg = bg,
             fg = fg,
-            insertbackground = cor_fontes_escuras,
+            insertbackground = cor_fontes_entradas,
             width = width
         )
         
@@ -130,23 +132,31 @@ class Texto_Entrada:
         bg = args.get('bg')
         fg = args.get('fg')
         font = args.get('font')
+        font_entr = args.get('font_entr')
         width = args.get('width')
         width_entr = args.get('width_entr')
+        show = args.get('show')
         
         if not bg:
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
             
         if not font:
             font = fonte_Mediana_14
+        
+        if not font_entr:
+            font_entr = fonte_Mediana_14
             
         if not width_entr:
             width_entr = 20
         
         if not width:
             width = 300 
+        
+        if not show:
+            show = ''
         
             
         self.Frame = Frame(master)
@@ -170,7 +180,12 @@ class Texto_Entrada:
         
         
         self.texto = Texto(self.Frame_texto,texto,bg=bg,fg=fg,font=font)
-        self.entrada = Entrada(self.Frame_entrada,width=width_entr)
+        
+        self.entrada = Entrada(self.Frame_entrada,width=width_entr,font=font_entr)
+        if show != '':
+            self.entrada.configure(
+                show = show
+            )
         
         
         self.texto.pack(side=LEFT)
@@ -189,7 +204,7 @@ class Botao_Check(Checkbutton):
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
             
         if not font:
             font = fonte_Mediana_14 
@@ -203,7 +218,7 @@ class Botao_Check(Checkbutton):
             fg=fg,
             font=font,
             selectcolor=selectcolor,
-            var = variavel
+            var = variavel,
         )
 
 class Botao_Imagem(Button):
@@ -220,10 +235,10 @@ class Botao_Imagem(Button):
         height = args.get('height')
         
         if not bg:
-            bg = cor_frames
+            bg = cor_botoes
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fontes_botoes
             
         if not font:
             font = fonte_Mediana_14 
@@ -244,7 +259,8 @@ class Botao_Imagem(Button):
             fg=fg,
             font=font,
             compound=LEFT,
-            padx=10,            
+            padx=10,  
+            relief= FLAT,          
         )
         
 class Botao_Radio(Radiobutton):
@@ -260,7 +276,7 @@ class Botao_Radio(Radiobutton):
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
             
         if not font:
             font = fonte_Mediana_14 
@@ -291,7 +307,7 @@ class Texto_Imagem:
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
         
         if not font:
             font = fonte_Mediana_14
@@ -322,7 +338,7 @@ class Texto_Imagem:
         self.txt.pack(side=LEFT)
                 
 class Texto_Infos:
-    def __init__(self,master,texto_principal,texto_secundario,dir_img,**args):
+    def __init__(self,master,texto_principal,texto_secundario,dir_img='',**args):
         
         bg = args.get('bg')
         fg_1 = args.get('fg_1')
@@ -331,15 +347,16 @@ class Texto_Infos:
         font_2 = args.get('font_2')
         x = args.get('x')
         y = args.get('y')
+        formato = args.get('formato')
         
         if not bg:
             bg = cor_fundo
         
         if not fg_1:
-            fg_1 = cor_fontes_claras
+            fg_1 = cor_fonte_textos_fundo
         
         if not fg_2:
-            fg_2 = cor_cabecalhos
+            fg_2 = cor_contraste_fundo
         
         if not font_1:
             font_1 = fonte_Mediana_16
@@ -352,19 +369,24 @@ class Texto_Infos:
             
         if not y:
             y = 35
+        
+        if not formato:
+            formato = 'padrao'
             
         self.Frame = Frame(master)
         self.Frame.configure(
             bg=bg
         )
         
-        dir_img = 'Icones\\' + dir_img
-        self.Imagem = redimensionar(dir_img,x,y)
-        self.Label_Imagem = Label(self.Frame)
-        self.Label_Imagem.configure(
-            image=self.Imagem,
-            bg=bg,
-        )
+        if dir_img != '':
+            dir_img = 'Icones\\' + dir_img
+            self.Imagem = redimensionar(dir_img,x,y)
+            self.Label_Imagem = Label(self.Frame)
+            self.Label_Imagem.configure(
+                image=self.Imagem,
+                bg=bg,
+            )
+            self.Label_Imagem.pack(side=LEFT,padx=5)
         
         self.Texto_Principal = Label(self.Frame)
         self.Texto_Principal.configure(
@@ -381,10 +403,16 @@ class Texto_Infos:
             font=font_2
         )     
         
-        self.Label_Imagem.pack(side=LEFT,padx=5)
-        self.Texto_Secundario.pack(side=TOP,anchor='w')
-        self.Texto_Principal.pack(side=TOP,anchor='w')
-    
+        if formato == 'padrao':
+            self.Texto_Secundario.pack(side=TOP,anchor='w')
+            self.Texto_Principal.pack(side=TOP,anchor='w')
+        elif formato == 'centro':
+            self.Texto_Secundario.pack(side=TOP,anchor='center')
+            self.Texto_Principal.pack(side=TOP,anchor='center')
+        elif formato == 'direita':
+            self.Texto_Secundario.pack(side=TOP,anchor='e')
+            self.Texto_Principal.pack(side=TOP,anchor='e')
+               
 class Lista_Selecao(ttk.Combobox):
     
     def __init__(self,master,**args):
@@ -399,7 +427,7 @@ class Lista_Selecao(ttk.Combobox):
             bg = cor_entradas
         
         if not fg:
-            fg = cor_fontes_escuras
+            fg = cor_fontes_entradas
             
         if not font:
             font = fonte_Textos_12 
@@ -411,7 +439,7 @@ class Lista_Selecao(ttk.Combobox):
             font = font,
             background = bg,
             foreground = fg,
-            width=15 
+            width=15,
         )
         
         style= ttk.Style()
@@ -505,10 +533,10 @@ class Texto_Seleciona:
             bg_lista = cor_entradas
         
         if not fg:
-            fg = cor_fontes_claras
+            fg = cor_fonte_textos_fundo
         
         if not fg_lista:
-            fg_lista = cor_fontes_escuras
+            fg_lista = cor_fontes_entradas
             
         if not font:
             font = fonte_Mediana_14 
@@ -562,10 +590,10 @@ class Abas(ttk.Notebook):
             bg = cor_fundo
         
         if not fg:
-            fg = cor_fontes_escuras
+            fg = cor_fonte_textos_fundo
             
         if not field:
-            field = cor_cabecalhos 
+            field = cor_cabecalho_tabelas 
             
         style= ttk.Style()
         style.theme_use('clam')
@@ -589,8 +617,10 @@ class Tabela:
         self.Listagem = ttk.Treeview(master,columns = self.Colunas,show='headings', height = qtd_linhas, selectmode='browse',style="myStyle.Treeview")
         
         for new in self.Colunas:
-            if new == 'ID':
-                self.Listagem.column(str(new), width = 20, minwidth=20)
+            if new == 'ID' or new == 'AGR':
+                self.Listagem.column(str(new), width = 10, minwidth=10,anchor='center')
+            elif new == 'CIDADE':
+                self.Listagem.column(str(new), width = 200, minwidth=250,anchor='center')
             else:
                 self.Listagem.column(str(new), width = largura, minwidth=lar_min,anchor='center')
             
@@ -622,8 +652,8 @@ class Tabela:
                     self.Listagem.insert('','end', values=item,tags = ('impar',))
                 self.UltimaLinha += 1
                 
-            self.Listagem.tag_configure('par', background='#D9D9D9')
-            self.Listagem.tag_configure('impar', background='#A5A5A5')
+            self.Listagem.tag_configure('par', background='#D9D9D9')  
+            self.Listagem.tag_configure('impar', background='#A5A5A5')  
             
         except:
             Mensagem_Erro('Houve algum problema ao inserir itens na tabela!')
@@ -633,26 +663,34 @@ class Tabela:
         #CONFIGURAR ESTILO
         self.style = ttk.Style()
         self.style.theme_use('alt')
-        """
+        
         self.style.configure("myStyle.Treeview",
-                fieldbackground=preto_fosco,
-                foreground=cor_fontes_claras,
-                background=cor_frames,
-                bordercolor=verde_suave,
+                fieldbackground=cor_fundo_tabela,
+                foreground=cor_fonte_tabela,
+                background=cor_fundo_tabela,
                 font=fonte_Textos_12,
-                rowheight=25,
-                relief="flat",
-                highlightthickness=2, 
-                bd=2,
+                #bordercolor=verde_suave,
+                #rowheight=25,
+                #relief="flat",
+                #highlightthickness=2, 
+                #bd=2,
                 )
-        """
+        
         self.style.configure("myStyle.Treeview.Heading",
-                        foreground=cor_fontes_claras,
-                        background=cor_frames,
+                        foreground=cor_fonte_cabecalho_tabela,
+                        background=cor_cabecalho_tabelas,
+                        font=fonte_Textos_12
                         )
 
         
         self.style.layout("myStyle.Treeview", [
                     ('myStyle.Treeview.treearea', {'sticky': 'nswe'})])
       
+    def Pegar_Infos(self,event):
+        nodeId_1 = self.Listagem.focus()
+        return self.Listagem.item(nodeId_1)['values']
+    
+    def atualizar_itens(self):
+        self.UltimaLinha = 0
+        self.Listagem.delete(*self.Listagem.get_children())
         

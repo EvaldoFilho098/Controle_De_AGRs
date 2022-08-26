@@ -3,30 +3,29 @@ CORES PARA A TELA
 
 """
 
-preto = "black"
-preto_fosco = "#0f0f0f"
-cinza_claro = "#454545"
-cinza_claro_suave = "#CECECE"
-branco = "#F9F9F9"
-laranja_meta = "#FF6524"  # EF6222
-laranja_meta_pastel = "#FF773D"
+################# TEMA ESCURO ########################
 
-preto_fosco_alternativo = "#2b2823"
-cinza_alternativo = "#505045"
-branco_alternativo = "#f1ecdf"
-laranja_alternativo = "#f58723"
-cinza_claro_alternativo = "#d4c9ad"
-cinza_claro_suave_alternativo = "#c7ba99"
+cor_botoes = '#1F1F1F'  # 383838  #D6D6D6
+cor_fontes_botoes = '#FFFFFF'
 
-verde_suave = "#9acc77"
-vermelho_suave = "#d31900"
-amarelo_suave = "#ffc52c"
+cor_cabecalho_tabelas = '#7A7A7A'
+cor_fonte_cabecalho_tabela = '#FFFFFF'
+cor_fundo_tabela = '#B8B8B8'
+cor_fonte_tabela = '#000000'
 
+cor_fundo = '#333333'  # F7F7F7  #828282
+cor_fonte_textos_fundo = '#FFFFFF'  # 383838
+cor_frames = '#B8B8B8'
+cor_fonte_textos_frames = '#FFFFFF'
 
-cor_fundo = "#0F0F0F"
-cor_cabecalhos = "#5B5B5B"
-cor_frames = "#222222"
-cor_entradas = "#D9D9D9"
-cor_fontes_claras = "#FFFFFF"
-cor_fontes_escuras = "#000000"
+cor_entradas = '#999999'
+cor_fontes_entradas = '#000000'
+
+cor_contraste_fundo = '#1F1F1F'
+cor_fonte_contraste_fundo = '#FFFFFF'
+
 cor_laranja = "#FF6900"
+cor_verde_suave = "#9acc77"
+cor_vermelho_suave = "#d31900"
+cor_amarelo_suave = "#ffc52c"
+

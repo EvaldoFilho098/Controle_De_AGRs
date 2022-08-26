@@ -32,7 +32,7 @@ class Tela():
             self.root.resizable(width = True, height = True)
             
         elif tipo == "cadastro":
-            self.width = "500"
+            self.width = "400"
             self.height = "600"
             
             #Nao redimensionar
