@@ -375,7 +375,7 @@ class tela_CadastroAGR(Tela):
         self.lista_widgets.append(self.SolPar)
         
         ################# TREINAMENTOS
-        self.frame_2.place(x=800,y=200,width=400,height=400)
+        self.frame_2.place(x=800,y=199,width=400,height=400)
         self.lista_widgets.append(self.frame_2)
         
         self.titulo_trei.Frame.pack(side=TOP,anchor='center',pady=30)

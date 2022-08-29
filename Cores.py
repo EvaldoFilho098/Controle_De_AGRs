@@ -24,7 +24,7 @@ cor_fontes_entradas = '#000000'
 cor_contraste_fundo = '#1F1F1F'
 cor_fonte_contraste_fundo = '#FFFFFF'
 
-cor_laranja = "#FF6900"
+cor_laranja = "#FF6900" 
 cor_verde_suave = "#9acc77"
 cor_vermelho_suave = "#d31900"
 cor_amarelo_suave = "#ffc52c"

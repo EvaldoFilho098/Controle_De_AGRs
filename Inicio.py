@@ -2,6 +2,7 @@ from Telas import *
 from Fontes import * 
 from Widgets import *
 from Imagem import *
+from tkinter import DISABLED,NORMAL
 import Banco_De_Dados as BD
 
 class tela_Inicio(Tela):
@@ -15,7 +16,7 @@ class tela_Inicio(Tela):
         self.adicionar_frames_da_tela()
         
         self.criar_botoes()
-        self.adicionar_botoes()
+        self.adicionar_botoes('FUNCIONARIO')
         
         self.criar_tabelas()
         self.adicionar_tabelas()
@@ -87,7 +88,7 @@ class tela_Inicio(Tela):
         
         self.Novo_AGR = Botao_Imagem(self.frame_botoes,'Novo AGR','novo-agr.png')
         self.Novo_AGR.configure(
-
+            
         )
 
         self.Todos_AGRs = Botao_Imagem(self.frame_botoes,'Visualizar AGRs','agrs.png')
@@ -112,7 +113,7 @@ class tela_Inicio(Tela):
 
         self.Vis_Maquinas = Botao_Imagem(self.frame_botoes,'Visualizar Máquinas','maquina.png')
         self.Vis_Maquinas.configure(
-
+            
         )
 
         self.Gerenciamento = Botao_Imagem(self.frame_botoes,'Gerenciamento','gerenciamento.png')
@@ -120,7 +121,7 @@ class tela_Inicio(Tela):
 
         )
 
-    def adicionar_botoes(self):
+    def adicionar_botoes(self,privilegio):
         
         self.frame_acima.pack(side=TOP,fill=X,pady=10)
         self.lista_widgets.append(self.frame_acima)
@@ -131,26 +132,37 @@ class tela_Inicio(Tela):
         self.testar_conec.pack(side=RIGHT,pady=10,padx=25)
         self.lista_widgets.append(self.testar_conec)
         
-        self.Novo_AGR.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Novo_AGR)
-        
-        self.Todos_AGRs.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Todos_AGRs)
-        
-        self.Infos_Gerais.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Infos_Gerais)
-        
-        self.Sol_Par.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Sol_Par)
-        
-        self.Sol_Tre.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Sol_Tre)
-        
-        self.Vis_Maquinas.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Vis_Maquinas)
-        
-        self.Gerenciamento.pack(side=TOP,anchor='center',pady=16,fill=X)
-        self.lista_widgets.append(self.Gerenciamento)
+        if privilegio == 'ADMINISTRADOR':
+            self.Novo_AGR.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Novo_AGR)
+            
+            self.Todos_AGRs.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Todos_AGRs)
+            
+            self.Infos_Gerais.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Infos_Gerais)
+            
+            self.Sol_Par.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Sol_Par)
+            
+            self.Sol_Tre.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Sol_Tre)
+            
+            self.Vis_Maquinas.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Vis_Maquinas)
+            
+            self.Gerenciamento.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Gerenciamento)
+        else:
+            
+            self.Todos_AGRs.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Todos_AGRs)
+            
+            self.Infos_Gerais.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Infos_Gerais)
+            
+            self.Vis_Maquinas.pack(side=TOP,anchor='center',pady=16,fill=X)
+            self.lista_widgets.append(self.Vis_Maquinas)
     
     def criar_tabelas(self):
         

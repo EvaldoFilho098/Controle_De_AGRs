@@ -98,11 +98,17 @@ class Tela():
         self.titulo_cabecalho = Texto(self.frame_cabecalho,titulo,font=fonte_Titulos_30)
         self.titulo_cabecalho.pack(side=TOP,padx=25,pady=20,anchor="center")
         
-        self.lbl_bem_vindo = Texto(self.frame_cabecalho,"Bem Vindo,")
+        self.lbl_bem_vindo = Texto(self.frame_cabecalho,"Bem Vindo,",font=fonte_Textos_11)
         self.lbl_bem_vindo.place(relx=0.85,rely=0.2)
         
-        self.lbl_funcionario = Texto(self.frame_cabecalho,funcionario)
+        self.lbl_funcionario = Texto(self.frame_cabecalho,funcionario,font=fonte_Textos_12)
         self.lbl_funcionario.place(relx=0.85,rely=0.5)
-    
+
+        self.botao_sair = Botao_Imagem(self.frame_cabecalho,'','sair.png')
+        self.botao_sair.config(
+            width=30,
+            bg=cor_fundo,
+        )
+        self.botao_sair.place(relx=0.96,rely=0.3)
                 
     

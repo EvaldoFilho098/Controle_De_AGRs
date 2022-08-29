@@ -130,6 +130,7 @@ class Texto_Entrada:
     def __init__(self,master,texto,**args):
         
         bg = args.get('bg')
+        bg_entr = args.get('bg_entr')
         fg = args.get('fg')
         font = args.get('font')
         font_entr = args.get('font_entr')
@@ -139,6 +140,9 @@ class Texto_Entrada:
         
         if not bg:
             bg = cor_fundo
+        
+        if not bg_entr:
+            bg_entr = cor_entradas
         
         if not fg:
             fg = cor_fonte_textos_fundo
@@ -181,7 +185,7 @@ class Texto_Entrada:
         
         self.texto = Texto(self.Frame_texto,texto,bg=bg,fg=fg,font=font)
         
-        self.entrada = Entrada(self.Frame_entrada,width=width_entr,font=font_entr)
+        self.entrada = Entrada(self.Frame_entrada,width=width_entr,font=font_entr,bg=bg_entr)
         if show != '':
             self.entrada.configure(
                 show = show
@@ -442,9 +446,9 @@ class Lista_Selecao(ttk.Combobox):
             width=15,
         )
         
-        style= ttk.Style()
-        style.theme_use('clam')
-        style.configure("TCombobox", 
+        style_lista= ttk.Style()
+        style_lista.theme_use('clam')
+        style_lista.configure("TCombobox", 
                         fieldbackground= bg,
                         foreground= fg,
                         relief="flat",
@@ -595,9 +599,9 @@ class Abas(ttk.Notebook):
         if not field:
             field = cor_cabecalho_tabelas 
             
-        style= ttk.Style()
-        style.theme_use('clam')
-        style.configure("TNotebook", 
+        style_notebook= ttk.Style()
+        style_notebook.theme_use('clam')
+        style_notebook.configure("TNotebook", 
                         fieldbackground= field,
                         foreground= fg,
                         background = bg,
@@ -661,10 +665,10 @@ class Tabela:
     def estilizar(self):
         
         #CONFIGURAR ESTILO
-        self.style = ttk.Style()
-        self.style.theme_use('alt')
+        style_tabela = ttk.Style()
+        style_tabela.theme_use('alt')
         
-        self.style.configure("myStyle.Treeview",
+        style_tabela.configure("myStyle.Treeview",
                 fieldbackground=cor_fundo_tabela,
                 foreground=cor_fonte_tabela,
                 background=cor_fundo_tabela,
@@ -676,14 +680,14 @@ class Tabela:
                 #bd=2,
                 )
         
-        self.style.configure("myStyle.Treeview.Heading",
+        style_tabela.configure("myStyle.Treeview.Heading",
                         foreground=cor_fonte_cabecalho_tabela,
                         background=cor_cabecalho_tabelas,
                         font=fonte_Textos_12
                         )
 
         
-        self.style.layout("myStyle.Treeview", [
+        style_tabela.layout("myStyle.Treeview", [
                     ('myStyle.Treeview.treearea', {'sticky': 'nswe'})])
       
     def Pegar_Infos(self,event):
