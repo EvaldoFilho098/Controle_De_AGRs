@@ -21,7 +21,7 @@ class tela_CadastroFuncionario(Tela):
         self.lista_cargos = ['Suporte Técnico','Intermediador','Treinador','Desenvolvedor']
         self.varPriv = IntVar()
         
-        self.titulo = Texto(self.root,'Novo Funcionário',bg=cor_fundo,font=fonte_Destaques_24)
+        self.titulo = Texto_Imagem(self.root,'Novo Funcionário','editar.png',bg=cor_fundo,font=fonte_Destaques_24)
         self.nome = Texto_Entrada(self.root,'Nome: ',bg=cor_fundo)
         self.email = Texto_Entrada(self.root,'E-mail: ',bg=cor_fundo)
         self.login = Texto_Entrada(self.root,'Login: ',bg=cor_fundo)
@@ -35,7 +35,7 @@ class tela_CadastroFuncionario(Tela):
         
     def adicionar_Campos(self):
         
-        self.titulo.pack(side=TOP,pady=30,anchor='center')
+        self.titulo.Frame.pack(side=TOP,pady=30,anchor='center')
         self.lista_widgets.append(self.titulo)
         
         self.nome.Frame.pack(side=TOP,pady=10,anchor='center')

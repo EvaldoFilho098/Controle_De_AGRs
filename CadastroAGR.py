@@ -1,4 +1,3 @@
-from doctest import master
 from Telas import *
 from Fontes import *
 from Widgets import *

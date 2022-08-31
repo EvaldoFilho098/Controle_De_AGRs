@@ -74,7 +74,7 @@ class tela_VisualizarMaquinas(Tela):
         self.frame_botoes.place(relx=0.07, rely=0.4,relheight=0.05, relwidth=0.86)
         self.lista_widgets.append(self.frame_botoes)
         
-        self.frame_opcoes.place(relx=0.03, rely=0.47,relheight=0.05, relwidth=0.90)
+        self.frame_opcoes.place(relx=0.03, rely=0.47,relheight=0.05, relwidth=0.87)
         self.lista_widgets.append(self.frame_opcoes)
 
         self.frame_tabela.place(relx=0.03, rely=0.53,relheight=0.45, relwidth=0.63)
@@ -96,18 +96,18 @@ class tela_VisualizarMaquinas(Tela):
 
         self.entrada_maquina = Texto_Entrada(self.frame_filtros, 'Máquina: ', width=250, font_entr=fonte_Textos_12, bg_entr=cor_fonte_contraste_fundo)
         
-        self.lista_status = ['PARAMETRIZADA','PENDENTE']
+        self.lista_status = ['PARAMETRIZADA','PENDENTE','DESPARAMETRIZADA']
         self.entrada_status = Texto_Seleciona(self.frame_filtros, 'Status: ', self.lista_status, width=250, font_lista=fonte_Textos_12)
         
-        self.entrada_MAC = Texto_Entrada(self.frame_filtros, 'MAC: ', width=250, font_entr=fonte_Textos_12, bg_entr=cor_fonte_contraste_fundo)
+        self.entrada_modelo = Texto_Entrada(self.frame_filtros, 'Modelo: ', width=250, font_entr=fonte_Textos_12, bg_entr=cor_fonte_contraste_fundo)
         
-        self.entrada_IP = Texto_Entrada(self.frame_filtros, 'IP: ', width=250, font_entr=fonte_Textos_12, bg_entr=cor_fonte_contraste_fundo)
+        self.entrada_marca = Texto_Entrada(self.frame_filtros, 'Marca: ', width=250, font_entr=fonte_Textos_12, bg_entr=cor_fonte_contraste_fundo)
 
         self.botao_pesquisar = Botao(self.frame_botoes, 'Pesquisar')
 
         self.bota_limpar = Botao(self.frame_botoes, 'Limpar')
 
-        self.colunas = ['ID','NOME AGR','MAQUINA','IP','MAC','STATUS']
+        self.colunas = ['ID','NOME AGR','MAQUINA','MODELO','MARCA','STATUS']
         self.tabela_agrs = Tabela(self.frame_tabela, self.colunas, 20, 150, 100)
 
     def adicionar_campos(self):
@@ -124,11 +124,11 @@ class tela_VisualizarMaquinas(Tela):
         self.entrada_maquina.Frame.place(relx=0.35, rely=0.20)
         self.lista_widgets.append(self.entrada_maquina)
 
-        self.entrada_MAC.Frame.place(relx=0.05, rely=0.60)
-        self.lista_widgets.append(self.entrada_MAC)
+        self.entrada_modelo.Frame.place(relx=0.05, rely=0.60)
+        self.lista_widgets.append(self.entrada_modelo)
 
-        self.entrada_IP.Frame.place(relx=0.35, rely=0.60)
-        self.lista_widgets.append(self.entrada_IP)
+        self.entrada_marca.Frame.place(relx=0.35, rely=0.60)
+        self.lista_widgets.append(self.entrada_marca)
 
         self.entrada_status.Frame.place(relx=0.65, rely=0.20)
         self.lista_widgets.append(self.entrada_status)
@@ -173,6 +173,8 @@ class tela_VisualizarMaquinas(Tela):
             bg=cor_fundo
         )
         
+
+        
     def adicionar_opcoes(self):
         
         self.botao_novaMaquina.pack(side=LEFT)
@@ -189,70 +191,80 @@ class tela_VisualizarMaquinas(Tela):
 
         self.botao_atualizar.pack(side=LEFT,padx=5)
         self.lista_widgets.append(self.botao_atualizar)
+        
     
     def criar_camposInfos(self):
         
         self.frame_nomeMaquina = Frame(self.frame_infos)
         self.frame_nomeMaquina.configure(
             bg=cor_contraste_fundo,
-            height=70,
-            width=340,
-        )
+            )
+        
+        self.frame_infosMarcaMaquina = Frame(self.frame_infos)
+        self.frame_infosMarcaMaquina.configure(
+            bg=cor_contraste_fundo,
+            )
         
         self.frame_infosMaquina = Frame(self.frame_infos)
         self.frame_infosMaquina.configure(
             bg=cor_contraste_fundo,
-            height=70,
-            width=340,
-        )
+            )
         
         self.frame_statusMaquina = Frame(self.frame_infos)
         self.frame_statusMaquina.configure(
             bg=cor_contraste_fundo,
-            height=70,
-            width=340,
-        )
+            )
         
         self.frame_agrAssinante = Frame(self.frame_infos)
         self.frame_agrAssinante.configure(
             bg=cor_contraste_fundo,
-            height=70,
-            width=340,
-        )
+            )
         
-        self.nomeMaquina = Texto_Infos(self.frame_nomeMaquina,'DESKTOP-564','Nome da Máquina','',bg=cor_contraste_fundo,fg_2=cor_frames,font_2=fonte_Textos_11,formato='centro')
-        self.infosIP = Texto_Infos(self.frame_infosMaquina,'123.655.123.321','IP','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Mediana_14,font_2=fonte_Textos_11,formato='padrao')
-        self.infosMAC = Texto_Infos(self.frame_infosMaquina,'12-5C-8E-9C-30','MAC','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Mediana_14,font_2=fonte_Textos_11,formato='padrao')
-        self.statusMaquina = Texto_Infos(self.frame_statusMaquina,'PARAMETRIZADA','Status','',bg=cor_contraste_fundo,fg_2=cor_frames,font_2=fonte_Textos_11,formato='centro')
-        self.agrAssinante = Texto_Infos(self.frame_agrAssinante,'Evaldo Filho','Assinada Por','',bg=cor_contraste_fundo,fg_2=cor_frames,font_2=fonte_Textos_11,formato='centro')
+        self.nomeMaquina = Texto_Infos(self.frame_nomeMaquina,'DESKTOP-564','Nome da Máquina','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_11,formato='padrao')
+        self.marcaMaquina = Texto_Infos(self.frame_infosMarcaMaquina,'Samsung','Marca','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_9,formato='padrao')
+        self.modeloMaquina = Texto_Infos(self.frame_infosMarcaMaquina,'Galaxy S2','Modelo','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_9,formato='padrao')
+        self.infosIP = Texto_Infos(self.frame_infosMaquina,'123.655.123.321','IP','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_9,formato='padrao')
+        self.infosMAC = Texto_Infos(self.frame_infosMaquina,'12-5C-8E-9C-30','MAC','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_9,formato='padrao')
+        self.statusMaquina = Texto_Infos(self.frame_statusMaquina,'PARAMETRIZADA','Status','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_11,formato='padrao')
+        self.agrAssinante = Texto_Infos(self.frame_agrAssinante,'Evaldo Filho','Assinada Por','',bg=cor_contraste_fundo,fg_2=cor_frames,font_1=fonte_Textos_12,font_2=fonte_Textos_11,formato='padrao')
     
     def adicionar_camposInfos(self):
         
-        self.frame_nomeMaquina.pack(side=TOP,pady=5)
+        self.frame_nomeMaquina.place(relx=0.0,rely=0.0,relheight=0.2,relwidth=1)
         self.lista_widgets.append(self.frame_nomeMaquina)
 
-        self.frame_infosMaquina.pack(side=TOP,pady=5)
+        self.frame_infosMarcaMaquina.place(relx=0.0,rely=0.22,relheight=0.2,relwidth=1)
+        self.lista_widgets.append(self.frame_infosMarcaMaquina)
+        
+        self.frame_infosMaquina.place(relx=0.0,rely=0.42,relheight=0.2,relwidth=1)
         self.lista_widgets.append(self.frame_infosMaquina)
 
-        self.frame_statusMaquina.pack(side=TOP,pady=5)
+        self.frame_statusMaquina.place(relx=0.0,rely=0.6,relheight=0.2,relwidth=1)
         self.lista_widgets.append(self.frame_statusMaquina)
 
-        self.frame_agrAssinante.pack(side=TOP,pady=5)
+        self.frame_agrAssinante.place(relx=0.0,rely=0.8,relheight=0.2,relwidth=1)
         self.lista_widgets.append(self.frame_agrAssinante)
         
-        self.nomeMaquina.Frame.pack(side=TOP,pady=10)
+        
+        self.nomeMaquina.Frame.pack(side=LEFT,padx=20,pady=10)
         self.lista_widgets.append(self.nomeMaquina)
 
-        self.infosIP.Frame.pack(side=LEFT,pady=10,padx=5)
+        self.marcaMaquina.Frame.place(relx=0.05,rely=0.0)
+        self.lista_widgets.append(self.marcaMaquina)
+
+        self.modeloMaquina.Frame.place(relx=0.5,rely=0.0)
+        self.lista_widgets.append(self.modeloMaquina)
+        
+        self.infosIP.Frame.place(relx=0.05,rely=0.0)
         self.lista_widgets.append(self.infosIP)
 
-        self.infosMAC.Frame.pack(side=LEFT,pady=10,padx=5)
+        self.infosMAC.Frame.place(relx=0.5,rely=0.0)
         self.lista_widgets.append(self.infosMAC)
 
-        self.statusMaquina.Frame.pack(side=TOP)
+        self.statusMaquina.Frame.pack(side=LEFT,padx=20)
         self.lista_widgets.append(self.statusMaquina)
 
-        self.agrAssinante.Frame.pack(side=TOP)
+        self.agrAssinante.Frame.pack(side=LEFT,padx=20)
         self.lista_widgets.append(self.agrAssinante)
 
 

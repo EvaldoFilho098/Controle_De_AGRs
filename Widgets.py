@@ -10,10 +10,21 @@ from tkinter import ttk, END, INSERT
 from PIL import Image, ImageTk
 from Imagem import redimensionar
 from Mensagens import Mensagem_Erro
-
+    
 
 class Botao(Button):
     def __init__(self,master,texto,**args):
+        """Classe de Botão Padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no botão
+            
+        Optional Args:
+            bg: Cor de background do botão. Defaut: cor_botoes\n
+            fg: Cor da fonte do botão. Defaut: cor_fontes_botoes\n
+            font: Fonte do Botão. Defaut: fonte_Mediana_14\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -39,6 +50,17 @@ class Botao(Button):
             
 class Texto(Label):
     def __init__(self,master,texto,**args):
+        """Classe de Label Padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Label
+            
+        Optional Args:
+            bg: Cor de background do Label. Defaut: cor_fundo\n
+            fg: Cor da fonte do Label. Defaut: cor_fonte_textos_fundo\n
+            font: Fonte do Label. Defaut: fonte_Mediana_14\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -61,8 +83,25 @@ class Texto(Label):
             font = font
         )
         
+    def set_text(self,text):
+        
+        self["text"] = text
+
+        
 class Entrada(Entry):
     def __init__(self,master,**args):
+        """Classe de Entry Padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Entry
+            
+        Optional Args:
+            bg: Cor de background do Entry. Defaut: cor_entradas\n
+            fg: Cor da fonte do Entry. Defaut: cor_fontes_entradas\n
+            font: Fonte do Entry. Defaut: fonte_Textos_12\n
+            width: Largura do Entry. Defaut: 15\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -128,6 +167,23 @@ class Entrada(Entry):
 
 class Texto_Entrada:
     def __init__(self,master,texto,**args):
+        """Classe de Frame Padrão com Label e Entry
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Label
+        
+        Optional Args:
+            bg: Cor de background do Frame. Default: cor_fundo\n
+            bg_entr: Cor de Background do Entry. Default: cor_entradas\n
+            fg: Cor da fonte do Label. Default: cor_fonte_textos_fundo\n
+            font: Fonte do Label. Default: fonte_Mediana_14\n
+            font_entr: Fonte do Entry. Default: fonte_Mediana_14\n
+            width: Largura do Frame. Default: 300\n
+            width_entr: Largura do entry. Default: 20\n
+            show: Caracter a ser exibido no Entry. Default: ''\n
+            
+        """
         
         bg = args.get('bg')
         bg_entr = args.get('bg_entr')
@@ -197,6 +253,19 @@ class Texto_Entrada:
 
 class Botao_Check(Checkbutton):
     def __init__(self,master,texto,variavel,**args):
+        """Classe de Checkbutton Padrão
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Label
+            variavel (var): Variavel a ser usada no checkbutton
+        
+        Optional Args:
+            bg: Cor de background do Botão. Default: cor_fundo\n
+            fg: Cor da fonte do Botão. Default: cor_fonte_textos_fundo\n
+            font: Fonte do Botão. Default: fonte_Mediana_14\n
+            selectcolor: Cor quando selecionado. Default: cor_fundo\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -227,6 +296,20 @@ class Botao_Check(Checkbutton):
 
 class Botao_Imagem(Button):
     def __init__(self,master,txt,dir_img,**args):
+        """Classe de Botão Padrão com Imagem
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Botão
+            dir_img (str): Caminho da imagem a ser exibida
+        
+        Optional Args:
+            bg: Cor de background do Botão. Default: cor_botoes\n
+            fg: Cor da fonte do Botão. Default: cor_fontes_botoes\n
+            font: Fonte do Botão. Default: fonte_Mediana_14\n
+            width: Largura do Botão. Default: 240\n
+            height: Altura do Botão. Default: 30\n
+        """
         super().__init__(master=master)
         
         dir_img = 'Icones\\' + dir_img
@@ -269,6 +352,20 @@ class Botao_Imagem(Button):
         
 class Botao_Radio(Radiobutton):
     def __init__(self,master,texto,variavel,valor,**args):
+        """Classe de Checkbutton Padrão
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Label
+            variavel (var): Variavel a ser usada no checkbutton
+            valor(var): Valor caso este seja o item selecionado
+        
+        Optional Args:
+            bg: Cor de background do Botão. Default: cor_fundo\n
+            fg: Cor da fonte do Botão. Default: cor_fonte_textos_fundo\n
+            font: Fonte do Botão. Default: fonte_Mediana_14\n
+            selectcolor: Cor quando selecionado. Default: cor_fundo\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -300,6 +397,20 @@ class Botao_Radio(Radiobutton):
 
 class Texto_Imagem:
     def __init__(self,master,texto,dir_img,**args):
+        """Classe de Label Padrão com Imagem
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Label
+            dir_img (str): Caminho da imagem a ser exibida
+        
+        Optional Args:
+            bg: Cor de background do Frame. Default: cor_fundo\n
+            fg: Cor da fonte do Label. Default: cor_fonte_textos_fundo\n
+            font: Fonte do Label. Default: fonte_Mediana_14\n
+            x: Largura da Imagem. Default: 30\n
+            y: Altura da Imagem. Default: 30\n
+        """
         
         bg = args.get('bg')
         fg = args.get('fg')
@@ -343,6 +454,24 @@ class Texto_Imagem:
                 
 class Texto_Infos:
     def __init__(self,master,texto_principal,texto_secundario,dir_img='',**args):
+        """Classe de Label Padrão com Imagem e Texto Explicativo
+
+        Args:
+            master (widget): Widget pai
+            texto_principal (str): Texto a Ser exibido no Frame
+            texto_secundario (str): Texto explicativo a Ser exibido no Frame
+            dir_img (str): Caminho da imagem a ser exibida
+        
+        Optional Args:
+            bg: Cor de background do Frame. Default: cor_fundo\n
+            fg_1: Cor da fonte do Label do Texto Principal. Default: cor_fonte_textos_fundo\n
+            fg_2: Cor da fonte do Label do Texto Secundário. Default: cor_contraste_fundo\n
+            font_1: Fonte do Label do Texto Principal. Default: fonte_Mediana_16\n
+            font_2: Fonte do Label do Texto Secundário. Default: fonte_Textos_9\n
+            x: Largura da Imagem. Default: 35\n
+            y: Altura da Imagem. Default: 35\n
+            formato: Posicionamento dos dois textos. Podendo ser 'centro','padrao' e 'direita'. Default: 'padrao'\n
+        """
         
         bg = args.get('bg')
         fg_1 = args.get('fg_1')
@@ -420,6 +549,17 @@ class Texto_Infos:
 class Lista_Selecao(ttk.Combobox):
     
     def __init__(self,master,**args):
+        """Classe de Combobox Padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+            
+        Optional Args:
+            bg: Cor de background do Combobox. Defaut: cor_entradas\n
+            fg: Cor da fonte do Combobox. Defaut: cor_fontes_entradas\n
+            font: Fonte do Combobox. Defaut: fonte_Textos_12\n
+            widht: Largura do Combobox. Defaut: 15\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -428,7 +568,7 @@ class Lista_Selecao(ttk.Combobox):
         width = args.get('width')
         
         if not bg:
-            bg = cor_entradas
+            bg = cor_fonte_textos_fundo
         
         if not fg:
             fg = cor_fontes_entradas
@@ -520,6 +660,23 @@ class Lista_Selecao(ttk.Combobox):
 
 class Texto_Seleciona:
     def __init__(self,master,texto,lista,**args):
+        """Classe de Label Padrão com Entrada de Comboboc
+
+        Args:
+            master (widget): Widget pai
+            texto (str): Texto a Ser exibido no Frame
+            lista (list): Lista de opções do Combobox
+        
+        Optional Args:
+            bg: Cor de background do Frame. Default: cor_fundo\n
+            bg_lista: Cor de background do Combobox. Default: cor_entradas\n
+            fg: Cor da fonte do Label. Default: cor_fonte_textos_fundo\n
+            fg_lista: Cor da fonte do Combobox. Default: cor_fontes_entradas\n
+            font: Fonte do Label . Default: fonte_Mediana_14\n
+            font_lista: Fonte do Combobox Default: fonte_Mediana_14\n
+            width: Largura do Frame. Default: 300\n
+            width_lista: Largura do Combobox. Default: 15\n
+            """
         
         bg = args.get('bg')
         bg_lista = args.get('bg_lista')
@@ -534,7 +691,7 @@ class Texto_Seleciona:
             bg = cor_fundo
         
         if not bg_lista:
-            bg_lista = cor_entradas
+            bg_lista = cor_fonte_textos_fundo
         
         if not fg:
             fg = cor_fonte_textos_fundo
@@ -584,6 +741,16 @@ class Texto_Seleciona:
 
 class Abas(ttk.Notebook):
     def __init__(self,master,**args):
+        """Classe de Notebook padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+        
+        Optional Args:
+            bg: Cor de background das Abas dos Notebook. Default: cor_fundo\n
+            fg: Cor da Fonte das Abas dos Notebooks. Default: cor_fonte_textos_fundo\n
+            field: Cor das Abas dos Notebook. Default: cor_cabecalho_tabelas\n
+        """
         super().__init__(master=master)
         
         bg = args.get('bg')
@@ -610,8 +777,17 @@ class Abas(ttk.Notebook):
      
 class Tabela:
     def __init__(self,master,colunas,qtd_linhas=15,largura=100,lar_min=100):
+        """Classe de Tabela Padrão para o sistema
+
+        Args:
+            master (widget): Widget pai
+            colunas (list): Lista de Colunas da Tabela
+            qtd_linhas (int, optional): Quantidade de Linhas a serem exibidas. Defaults to 15.
+            largura (int, optional): Largura de cada Coluna da Tabela. Defaults to 100.
+            lar_min (int, optional): Largura mínima de cada Coluna da Tabela. Defaults to 100.
+        """
         
-        self.estilizar()
+        #self.estilizar()
         
         self.Colunas = colunas
         self.Largura = largura
@@ -656,8 +832,8 @@ class Tabela:
                     self.Listagem.insert('','end', values=item,tags = ('impar',))
                 self.UltimaLinha += 1
                 
-            self.Listagem.tag_configure('par', background='#D9D9D9')  
-            self.Listagem.tag_configure('impar', background='#A5A5A5')  
+            self.Listagem.tag_configure('par', background='#c6d6d6')  
+            self.Listagem.tag_configure('impar', background='#dee7e7')  
             
         except:
             Mensagem_Erro('Houve algum problema ao inserir itens na tabela!')
@@ -672,9 +848,9 @@ class Tabela:
                 fieldbackground=cor_fundo_tabela,
                 foreground=cor_fonte_tabela,
                 background=cor_fundo_tabela,
-                font=fonte_Textos_12,
+                font=fonte_Mediana_14,
+                #rowheight=100,
                 #bordercolor=verde_suave,
-                #rowheight=25,
                 #relief="flat",
                 #highlightthickness=2, 
                 #bd=2,
@@ -683,12 +859,12 @@ class Tabela:
         style_tabela.configure("myStyle.Treeview.Heading",
                         foreground=cor_fonte_cabecalho_tabela,
                         background=cor_cabecalho_tabelas,
-                        font=fonte_Textos_12
+                        font=fonte_Mediana_16
                         )
 
         
-        style_tabela.layout("myStyle.Treeview", [
-                    ('myStyle.Treeview.treearea', {'sticky': 'nswe'})])
+        #style_tabela.layout("myStyle.Treeview", [
+        #            ('myStyle.Treeview.treearea', {'sticky': 'nswe'})])
       
     def Pegar_Infos(self,event):
         nodeId_1 = self.Listagem.focus()

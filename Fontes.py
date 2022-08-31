@@ -17,3 +17,5 @@ fonte_Destaques_24 = (fonte, 24)
 fonte_Titulos_30 = (fonte, 30)
 fonte_Titulos_32 = (fonte, 32)
 fonte_Titulos_34 = (fonte, 34)
+
+fonte_Textos_12_sublinhado = (fonte,12,'italic underline')

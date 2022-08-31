@@ -4,6 +4,7 @@ from Widgets import *
 from Imagem import *
 from tkinter import DISABLED,NORMAL
 import Banco_De_Dados as BD
+from ibge.localidades import Estados
 
 class tela_VisualizarAGRs(Tela):
     
@@ -52,13 +53,13 @@ class tela_VisualizarAGRs(Tela):
         self.frame_titulo_filtros.place(relx=0.07,rely=0.15,relheight=0.05,relwidth=0.86)
         self.lista_widgets.append(self.frame_titulo_filtros)
         
-        self.frame_filtros.place(relx=0.07,rely=0.21,relheight=0.25,relwidth=0.86)
+        self.frame_filtros.place(relx=0.07,rely=0.21,relheight=0.22,relwidth=0.86)
         self.lista_widgets.append(self.frame_filtros)
         
-        self.frame_botoes.place(relx=0.07,rely=0.465,relheight=0.06,relwidth=0.86)
+        self.frame_botoes.place(relx=0.07,rely=0.45,relheight=0.06,relwidth=0.86)
         self.lista_widgets.append(self.frame_botoes)
         
-        self.frame_tabela.place(relx=0.07,rely=0.53,relheight=0.45,relwidth=0.86)
+        self.frame_tabela.place(relx=0.07,rely=0.53,relheight=0.38,relwidth=0.86)
         self.lista_widgets.append(self.frame_tabela)
     
     def criar_campos(self):
@@ -72,9 +73,14 @@ class tela_VisualizarAGRs(Tela):
         
         self.entrada_nome = Texto_Entrada(self.frame_filtros,'Nome: ',width=250,font_entr=fonte_Textos_12,bg_entr=cor_fonte_contraste_fundo)
         
-        self.entrada_cidade = Texto_Entrada(self.frame_filtros,'Cidade: ',width=250,font_entr=fonte_Textos_12,bg_entr=cor_fonte_contraste_fundo)
+        #self.entrada_cidade = Texto_Entrada(self.frame_filtros,'Cidade: ',width=250,font_entr=fonte_Textos_12,bg_entr=cor_fonte_contraste_fundo)
+        self.lista_cidades = BD.Selecionar_Diferentes('cidade_agr','agrs')
+        self.entrada_cidade = Texto_Seleciona(self.frame_filtros,'Cidade: ',self.lista_cidades,width=250,font_lista=fonte_Textos_12,bg_lista=cor_fonte_contraste_fundo)
         
-        self.entrada_uf = Texto_Entrada(self.frame_filtros,'UF: ',width=250,font_entr=fonte_Textos_12,bg_entr=cor_fonte_contraste_fundo)
+        self.estados = Estados()
+        self.lista_estados = self.estados.getSigla()
+        #self.entrada_uf = Texto_Entrada(self.frame_filtros,'UF: ',width=250,font_entr=fonte_Textos_12,bg_entr=cor_fonte_contraste_fundo)
+        self.entrada_uf = Texto_Seleciona(self.frame_filtros,'UF: ',self.lista_estados,width=250,font_lista=fonte_Textos_12,bg_lista=cor_fonte_contraste_fundo)
         
         self.lista_status = ['ATIVO','INATIVO','PENDENTE']
         self.entrada_status = Texto_Seleciona(self.frame_filtros,'Status: ',self.lista_status,width=250,font_lista=fonte_Textos_12)
@@ -96,10 +102,12 @@ class tela_VisualizarAGRs(Tela):
         
         self.botao_pesquisar = Botao(self.frame_botoes,'Pesquisar')
         
-        self.bota_limpar = Botao(self.frame_botoes,'Limpar')
+        self.botao_limpar = Botao(self.frame_botoes,'Limpar')
         
         self.colunas = ['ID','NOME','LOCAL','STATUS','AC META','AC SOLUTI','AC DIGITAL','TERMO']
         self.tabela_agrs = Tabela(self.frame_tabela,self.colunas,20,100,100)
+        
+        self.botao_selecionar = Botao(self.root,'Selecionar')
         
     
     def adicionar_campos(self):
@@ -137,8 +145,8 @@ class tela_VisualizarAGRs(Tela):
         self.botao_pesquisar.place(relx=0.20,rely=0.0,relwidth=0.25)
         self.lista_widgets.append(self.botao_pesquisar)
         
-        self.bota_limpar.place(relx=0.55,rely=0.0,relwidth=0.25)
-        self.lista_widgets.append(self.bota_limpar)
+        self.botao_limpar.place(relx=0.55,rely=0.0,relwidth=0.25)
+        self.lista_widgets.append(self.botao_limpar)
         
         self.tabela_agrs.Listagem.pack(side=TOP,anchor='center',fill=BOTH)
         self.lista_widgets.append(self.tabela_agrs)
@@ -146,6 +154,8 @@ class tela_VisualizarAGRs(Tela):
         self.tabela_agrs.Barra_Y.place(relx=0.988,rely=0,relheight=1)
         self.lista_widgets.append(self.tabela_agrs.Barra_Y)
     
+        #self.botao_selecionar.pack(side=BOTTOM,anchor='center',pady=5)
+        self.lista_widgets.append(self.botao_selecionar)
 
 root = Tk()
 tela_VisualizarAGRs(root)
